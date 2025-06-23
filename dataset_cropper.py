@@ -75,12 +75,16 @@ def process_images(defect_dir: str, output_dir: str = "crop", debug_on:bool = Fa
         
         # Находим соответствующий чистый файл
         # Ищем файл, который начинается с того же числа (предполагаем формат "число...")
-        file_prefix = re.match(r"\d+", marked_file).group()
+        pattern = re.match(r"\d+", marked_file)
+        if pattern is None: # если такого файла нет
+            print(f"не выделить число из файла {marked_file}") 
+            continue
+        file_prefix = pattern.group()
         clean_files = [f for f in os.listdir(os.path.join(defect_dir, clean_dir)) if f.startswith(file_prefix) and f.endswith(('.jpg', '.jpeg', '.png'))]
         
         if not clean_files:
             print(f"Не найден соответствующий чистый файл для {marked_file} \
-                  (поиск по префиксу {file_prefix})")
+                  в папке {defect_dir} (поиск по префиксу {file_prefix})")
             continue
         
         # Берем первый подходящий файл
